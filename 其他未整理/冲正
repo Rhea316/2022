@@ -1,0 +1,216 @@
+import os
+str1 = '$'
+file_list = []
+os.chdir(r"C:\Users\ThinkPad\Desktop\冲正测试")
+for path_name, dir, files_name in os.walk(os.getcwd()):
+    for file in files_name:
+        if str1 not in file:
+            file_list.append(os.path.join(path_name, file))
+print(len(file_list))
+print('\n'.join(file_list))
+
+
+
+import pandas as pd
+df_group = pd.DataFrame(columns = ['Path','Columns','False','True'])
+type1 = '.xls'
+type2 = '.csv'
+type3 = '.et'
+output_path = 'C:\\Users\\ThinkPad\\Desktop\冲正测试\\'
+for i in range(len(file_list)):
+    if type1 in file_list[i]:
+        df = pd.read_excel(file_list[i], encoding = "gbk")
+        df = df.loc[:,~df.columns.str.contains('^Unnamed')]
+    elif type2 in file_list[i]:
+        df = pd.read_csv(file_list[i], encoding = 'GB18030')
+        df = df.loc[:,~df.columns.str.contains('^Unnamed')]
+    else:
+        continue
+    print(i ,end = ' ')
+    df.columns = df.columns.str.strip()
+    col_name = df.columns
+    bool_S = df.duplicated().value_counts()
+    if len(bool_S)==1:
+        df_group.loc[i] = {'Path':file_list[i],'Columns':tuple(col_name),'False':bool_S[0],'True':0}
+    elif len(bool_S)==2:
+        df_group.loc[i] = {'Path':file_list[i],'Columns':tuple(col_name),'False':bool_S[0],'True':bool_S[1]}
+grouped = df_group.groupby('Columns')
+groupname_list = list(grouped.size().index)
+print('以下'+str(len(groupname_list))+'种格式数据分类，保留流水、账户类别')
+print(grouped.size())
+
+col_name11任务 = ('任务流水号','银行名称','主体类别','证账号码','账卡号','发送时间','反馈时间','反馈结果','入库状态','请求单号','查询结果')
+
+# 针对32列流水，超过的剔除     if df.shape[1]==33: df = df.loc[:,~df.columns.str.contains('商户名称')]
+
+col_name32流水 = ('交易卡号','交易账号','查询反馈结果原因','交易户名','交易证件号码','交易时间','交易金额','交易余额','收付标志',
+                '交易对手账卡号','现金标志','对手户名','对手身份证号','对手开户银行',
+                '摘要说明','交易币种','交易网点名称','交易场所','交易发生地','交易是否成功','传票号','IP地址','MAC地址','对手交易余额',
+                '交易流水号','渠道','日志号','凭证种类','凭证号','交易柜员号','备注',                     '交易类型')
+
+col_name32_1流水 = ('交易卡号','交易账号','查询反馈结果原因','交易户名','交易证件号码','交易时间','交易金额','交易余额','收付标志',
+                '交易对手账卡号','现金标志','对手户名','对手身份证号','对手开户银行',
+                '摘要说明','交易币种','交易网点名称',           '交易发生地','交易是否成功','传票号','IP地址','MAC地址','对手交易余额',
+                '交易流水号',       '日志号','凭证种类','凭证号','交易柜员号','备注','商户名称','商户代码','交易类型')
+
+col_name33流水 = ('交易卡号','交易账号','查询反馈结果原因','交易户名','交易证件号码','交易时间','交易金额','交易余额','收付标志',
+                '交易对手账卡号','现金标志','对手户名','对手身份证号','对手开户银行',
+                '摘要说明','交易币种','交易网点名称','交易场所','交易发生地','交易是否成功','传票号','IP地址','MAC地址','对手交易余额',
+                '交易流水号','渠道','日志号','凭证种类','凭证号','交易柜员号','备注','商户名称',           '交易类型')
+
+col_name31流水 = ('交易卡号','交易账号','查询反馈结果原因','交易户名','交易证件号码','交易时间','交易金额','交易余额','收付标志',
+                '交易对手账卡号','现金标志','对手户名','对手身份证号','对手开户银行',
+                '摘要说明','交易币种','交易网点名称','交易场所','交易发生地','交易是否成功','传票号','IP地址','MAC地址','对手交易余额',
+                '交易流水号','渠道','日志号','凭证种类','凭证号','交易柜员号','备注')
+col_name36标准流水 = ['银行','客户名称','客户证件号码','查询账号','查询卡号','交易对方名称','交易对方证件号码','交易对方账号','交易对方卡号',
+                 '交易类型','借贷标志','币种','交易金额','交易余额','交易时间','交易流水号','交易对方余额','交易对方账号开户行',
+                 '交易摘要','交易网点名称','交易网点代码','日志号','传票号','凭证种类','凭证号',
+                 '现金标志','终端号','交易是否成功','交易发生地','商户名称','商户号','IP地址','MAC地址','交易柜员号','交易渠道','备注']
+
+
+col_name18证件 = ('客户名称','证照类型','证照号码',                  '单位地址',                      '单位电话',           '工作单位','邮箱地址',
+                '代办人姓名','代办人证件类型','代办人证件号码','国税纳税号','地税纳税号','法人代表',
+                '法人代表证件类型','法人代表证件号码','出生日期','户籍地址',
+                '客户工商执照号码')
+
+col_name19证件 = ('客户名称','证照类型','证照号码','现住址_行政区划','单位地址','联系电话','联系手机','单位电话','住宅电话','工作单位','邮箱地址',
+                '代办人姓名','代办人证件类型','代办人证件号码','国税纳税号','地税纳税号','法人代表',
+                '客户工商执照号码')
+
+col_name22证件 = ('客户名称','证照类型','证照号码','现住址_行政区划','单位地址','联系电话','联系手机','单位电话','住宅电话','工作单位','邮箱地址',
+                '代办人姓名','代办人证件类型','代办人证件号码','国税纳税号','地税纳税号','法人代表',
+                '法人代表证件类型','法人代表证件号码','出生日期','户籍地址',
+                '客户工商执照号码')
+
+col_name5证件 = ('开户名称', '证照类型', '证照号码', '住宅地址', '住宅电话') # ['客户名称','证照类型','证照号码','住宅地址','联系电话']
+col_name4证件 = ('开户名称', '证照类型', '证照号码', '联系电话') # ['客户名称','证照类型','证照号码','联系电话']
+
+# 针对账户第一列、第二列固定为'账户开户名称','开户人证件号码'，有问题的调列顺序或者剔除列
+col_name43账户 = (          '账户开户名称','开户人证件号码','交易卡号','交易账号','账号开户时间','账户余额','可用余额','币种','开户网点代码','开户网点',
+               '账户状态','炒汇标志名称',                  '销户日期','账户类型','开户联系方式','通信地址','联系电话','代理人','代理人电话','备注',
+               '开户省份','开户城市','账号开户银行','客户代码','法人代表','客户工商执照号码','法人代表证件号码','住宅地址','邮政编码',
+               '代办人证件号码','邮箱地址','关联资金账户','地税纳税号','单位电话','代办人证件类型','住宅电话','法人代表证件类型','国税纳税号',
+               '单位地址','工作单位','销户网点','最后交易时间','账户销户银行')
+col_name45账户 = ('银行名称','账户开户名称','开户人证件号码','交易卡号','交易账号','账号开户时间','账户余额','可用余额','币种','开户网点代码','开户网点',
+                '账户状态','炒汇标志名称','开户人证件类型','销户日期','账户类型','开户联系方式','通信地址','联系电话','代理人','代理人电话','备注',
+                '开户省份','开户城市','账号开户银行','客户代码','法人代表','客户工商执照号码','法人代表证件号码','住宅地址','邮政编码',
+                '代办人证件号码','邮箱地址','关联资金账户','地税纳税号','单位电话','代办人证件类型','住宅电话','法人代表证件类型','国税纳税号',
+                '单位地址','工作单位','销户网点','最后交易时间','账户销户银行')
+col_name18账户 = (           '账户开户名称','开户人证件号码','交易卡号','交易账号','账号开户时间','账户余额','可用余额','币种','开户网点代码','开户网点',
+                '账户状态','钞汇标志名称',                  '销户日期','账户类型',                                                          '备注',
+                        '账号开户银行',
+                '销户网点','最后交易时间')
+
+
+for p in range(len(groupname_list)):
+    if groupname_list[p] == col_name32流水 or groupname_list[p] == col_name32_1流水 or groupname_list[p] == col_name31流水:
+        group_流水 = grouped.get_group(groupname_list[p])
+        group_流水['文件序号I'] = group_流水.index
+    elif groupname_list[p] == col_name33流水:
+        group_流水 = group_流水.append( grouped.get_group(groupname_list[p]) )
+        group_流水['文件序号I'] = group_流水.index
+    elif groupname_list[p] == col_name43账户 or groupname_list[p] == col_name18账户:
+        group_账户 = grouped.get_group(groupname_list[p])
+        group_账户['文件序号I'] = group_账户.index
+    elif groupname_list[p] == col_name45账户:
+        group_账户 = group_账户.append( grouped.get_group(groupname_list[p]) )
+        group_账户['文件序号I'] = group_账户.index
+    elif groupname_list[p] == col_name18证件 or groupname_list[p] == col_name19证件:
+        group_证件 = grouped.get_group(groupname_list[p])
+    elif groupname_list[p] == col_name5证件 or groupname_list[p] == col_name4证件:
+        group_证件 = group_证件.append(grouped.get_group(groupname_list[p]) )
+    elif groupname_list[p] == col_name11任务:        
+        group_任务 = grouped.get_group(groupname_list[p])
+
+
+with pd.ExcelWriter(output_path + "文件目录.xlsx") as writer:
+    group_流水.to_excel(writer, sheet_name = '流水文件目录',index = None)
+#     group_账户.to_excel(writer, sheet_name ='账户文件目录',index = None)
+print('文件目录Done!')
+
+
+import numpy as np
+import re
+import datetime
+df_忽略行 = pd.DataFrame()
+df_冲正 = pd.DataFrame()
+all_流水 = pd.DataFrame()
+all_账户 = pd.DataFrame()
+all_证件 = pd.DataFrame()
+all_任务 = pd.DataFrame()
+for i in range(len(file_list)):
+    if file_list[i] in list(group_流水['Path']):
+        if type1 in file_list[i] or type3 in file_list[i]:
+            df = pd.read_excel(file_list[i],encoding = "gbk",dtype = object)
+        elif type2 in file_list[i]:
+            df = pd.read_csv(file_list[i], encoding = 'GB18030')
+        df = df.loc[:,~df.columns.str.contains('^Unnamed')]
+        df.columns = df.columns.str.strip()      # 去掉标题行的\t
+        col_name = df.columns.tolist()
+        if df.shape[1]==33:
+            df = df.loc[:,~df.columns.str.contains('商户名称')]
+        elif df.shape[1]==31:
+            df = pd.DataFrame(df,columns = df.columns.tolist()+['交易类型'])
+        print(i,end=' ')
+        df['path'] = file_list[i]
+        df['序号'] = df.index
+        df = df.applymap(lambda x: re.sub('\t','',str(x)).strip())  # 去掉每个元素的\t
+        df = df.applymap(lambda x: re.sub('nan','',str(x)).strip())
+        df['交易卡号'] = df['交易卡号'].map(lambda x: np.NaN if str(x)=='' or str(x)==' ' else x)
+        df['交易卡号'][df['交易卡号'].isnull()]=df['交易账号'][df['交易卡号'].isnull()] # 用账号填充卡号空白
+        df_忽略行 = df_忽略行.append(df[(df['交易金额']=='') | (df['交易金额']=='交易金额') | (df['交易卡号']=='')| (df['交易时间']=='')])
+        df = df.drop(df[(df['交易金额']=='') | (df['交易金额']=='交易金额') | (df['交易卡号']=='') | (df['交易时间']=='')].index)  # 记录后删除交易金额为空或者账号卡号都为空的无效流水行
+        df['交易金额'] = df['交易金额'].map(lambda x: float(x))  #交易金额指定浮点型
+        df['交易余额'] = df['交易余额'].map(lambda x: np.NaN if str(x)=='' else x)
+        df['交易余额'] = df['交易余额'].map(lambda x: float(x))  #交易余额指定浮点型
+        df['收付标志'] = df['收付标志'].map(lambda x:'出' if x=='借' else ('进' if x=='贷' else x))
+        df['交易时间'] = df['交易时间'].map(lambda x:str(datetime.datetime.strptime(x, '%Y-%m-%d%H:%M:%S')) if len(x)== 18 else x)
+        df = df.drop_duplicates(subset = ['交易卡号','交易时间','交易金额','交易余额','收付标志','交易对手账卡号'],keep = 'last')  #去除重复
+        df = df.sort_values(by = ['交易卡号','交易时间','交易金额'],ascending=[True,True,False]).reset_index().iloc[:,1:] # 时间升序排序更新index
+        print(str(i)+'. 单表去重后记录数:'+str(df.shape[0]),end = ' ')
+        df_负 = df[df['交易金额']<0]
+        for j in range(0,len(df_负)):
+            df_正 = df[(df['交易金额']== abs(df_负['交易金额'].iloc[j])) & \
+                (df['收付标志']== df_负['收付标志'].iloc[j]) & \
+                (df['交易时间']<= df_负['交易时间'].iloc[j]) & \
+                (df['交易卡号']== df_负['交易卡号'].iloc[j]) & \
+                (
+                 (df['交易对手账卡号']== df_负['交易对手账卡号'].iloc[j]) | \
+                 ((df['交易对手账卡号'] == '') & (df_负['交易对手账卡号'].iloc[j] == '')) | \
+                 ((df['交易对手账卡号'] != '') & (df_负['交易对手账卡号'].iloc[j] == '')) | \
+                 ((df['交易对手账卡号'] == '') & (df_负['交易对手账卡号'].iloc[j] != '')) | \
+                 ((df['交易对手账卡号'] != '') & (df['交易卡号']==df_负['交易对手账卡号'].iloc[j]))
+                )
+                ]
+            d_labels = [df_正.index.max(),df_负.index[j]]  # 一对冲正匹配记录的索引
+            if len(df_正)>0:
+                df_冲正 = df_冲正.append(df.loc[d_labels])
+                df = df.drop(d_labels) # 记录后删除一对冲正匹配的无效流水行
+                print(d_labels)
+            elif len(df_正)==0:
+                print(d_labels)
+        print('剔除冲正后保留记录数:'+str(df.shape[0]))
+        all_流水 = all_流水.append(df)
+    elif file_list[i] in list(group_账户['Path']):
+        if type1 in file_list[i]:
+            df_account = pd.read_excel(file_list[i],encoding = "gbk",dtype = object)
+        elif type2 in file_list[i]:
+            df_account = pd.read_csv(file_list[i], engine="python",dtype = object)
+        df_account = df_account.loc[:,~df_account.columns.str.contains('^Unnamed')]
+        df_account.columns = df_account.columns.str.strip()
+        if df_account.shape[1]==45:
+            df_account = df_account.loc[:,~df_account.columns.str.contains('银行名称')]
+        df_account['path'] = file_list[i]
+        df_account = df_account.applymap(lambda x: re.sub('\t','',str(x)).strip())
+        df_account = df_account.applymap(lambda x: re.sub('nan','',str(x)).strip())
+        all_账户 = all_账户.append(df_account)
+
+all_流水.to_csv(output_path + "流水合并剔除冲正.csv",index = None)
+print(all_流水.shape)
+with pd.ExcelWriter(output_path + "剔除行.xlsx") as writer:
+    df_冲正.to_excel(writer, sheet_name='冲正全',index = None)
+    df_忽略行.to_excel(writer, sheet_name='忽略行',index = None)
+print(df_冲正.shape,end = ' ')
+print(df_忽略行.shape)
+
+print('合并Done!')
